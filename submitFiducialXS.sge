@@ -1,0 +1,17 @@
+#!/bin/sh
+#$ -P l.gaes
+#$ -S /bin/bash
+#$ -cwd
+#$ -t 1-6
+#$ -N FiducialXS
+#$ -pe proof 4
+#$ -o job_$JOB_ID-$TASK_ID.out
+#$ -j y
+
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+pushd /gpfs/csic_users/piedra/CMSSW_7_3_0/src
+eval `scramv1 runtime -sh`
+popd
+
+INDEX=`expr $SGE_TASK_ID - 1`
+root -l -b -q 'runFiducialXS.C('$INDEX')'
