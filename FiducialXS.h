@@ -13,8 +13,6 @@
 
 // Header file for the classes stored in the TTree if any.
 #include <vector>
-#include <vector>
-#include <vector>
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -830,10 +828,10 @@ FiducialXS::FiducialXS(Int_t index, TTree *tree) : fChain(0)
 
       // The following code should be used if you want this class to access a chain
       // of trees.
-      TChain * chain = new TChain("demo/Tree","");
+      TChain *chain = new TChain("demo/Tree","");
 
       if (index < 0)
-	{
+      	{
 	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_0.root/demo/Tree");
 	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_1.root/demo/Tree");
 	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_2.root/demo/Tree");

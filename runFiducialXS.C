@@ -1,18 +1,17 @@
 //------------------------------------------------------------------------------
 //
-// index = -2 only loads the macro
+// index < -1 only loads the macro
 // index = -1 runs on all events
 // index >  0 runs on _index.root file
 //
 //------------------------------------------------------------------------------
-void runFiducialXS(Int_t index = -2)
+void runFiducialXS(int index = -999)
 {
   gInterpreter->LoadMacro("FiducialXS.C+");
 
-  if (index > -2)
-    {
-      FiducialXS fxs;
+  if (index < -1) return;
 
-      fxs.Loop(index);
-    }
+  FiducialXS fxs(index);
+
+  fxs.Loop(index);
 }
