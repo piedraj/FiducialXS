@@ -42,7 +42,7 @@ void FiducialXS::Loop(Int_t index)
   //----------------------------------------------------------------------------
   if (fChain == 0) return;
 
-  Long64_t nentries = 20000;//fChain->GetEntries();
+  Long64_t nentries = fChain->GetEntries();
 
   printf("\n Will run on %lld events\n\n", nentries);
 
