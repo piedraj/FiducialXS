@@ -804,6 +804,16 @@ public :
    virtual void     Loop(Int_t index = -1);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+
+
+   // Additional member functions
+   bool  isTightMuon  (unsigned iMuon, float minPt = 20.);
+   bool  isLooseMuon  (unsigned iMuon, float minPt = 20.);
+   float muonIsolation(unsigned iMuon);
+   bool  isTightElec  (unsigned iElec, float minPt = 20.);
+   bool  isLooseElec  (unsigned iElec, float minPt = 20.);
+   float elecIsolation(unsigned iElec);
+   bool  passJetID    (unsigned iJet);
 };
 
 #endif
