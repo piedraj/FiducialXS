@@ -72,7 +72,7 @@ void FiducialXS::Loop(Int_t index)
     int gen_tau_electron_index = -1;
     int gen_tau_muon_index     = -1;
 
-    for (UInt_t i=0; i<T_Gen_PromptTau_pdgId->size(); i++) {
+    for (UInt_t i=0; i<T_Gen_PromptTau_IsLepDec->size(); i++) {
       if (T_Gen_PromptTau_IsLepDec->at(i)) {
 	if (abs(T_Gen_PromptTau_LepDec_pdgId->at(i)) == 11)
 	  {
@@ -170,22 +170,28 @@ void FiducialXS::Loop(Int_t index)
 
     int n_loose_lepton = 0;
 
+    // Electron loop
     for (UInt_t i=0; i<T_Elec_Pt->size(); i++) {
 
-      if (isTightElec(i))
+      if (!isFiducialElec(i)) continue;
+
+      if (isMediumElec(i))
 	{
 	  TLorentzVector gElec(T_Elec_Px->at(i), T_Elec_Py->at(i),
 			       T_Elec_Pz->at(i), T_Elec_Energy->at(i));
-
+	  
 	  vElec.push_back(gElec);
 	  cElec.push_back(T_Elec_Charge->at(i));
 	}
-      else if (isLooseElec(i)) n_loose_lepton++;
+      else if (isVetoElec(i)) n_loose_lepton++;
     }
 
+    // Muon loop
     for (UInt_t i=0; i<T_Muon_Pt->size(); i++) {
 
-      if (isTightMuon(i))
+      if (!isFiducialMuon(i)) continue;
+
+      if (isTightMuon(i) && muonIsolation(i) < 0.12)
 	{
 	  TLorentzVector gMuon(T_Muon_Px->at(i), T_Muon_Py->at(i),
 			       T_Muon_Pz->at(i), T_Muon_Energy->at(i));
@@ -193,7 +199,7 @@ void FiducialXS::Loop(Int_t index)
 	  vMuon.push_back(gMuon);
 	  cMuon.push_back(T_Muon_Charge->at(i));
 	}
-      else if (isLooseMuon(i)) n_loose_lepton++;
+      else if (isLooseMuon(i) && muonIsolation(i) < 0.20) n_loose_lepton++;
     }
 
 
@@ -294,52 +300,64 @@ void FiducialXS::Loop(Int_t index)
 }
 
 
-bool FiducialXS::isTightMuon( unsigned iMuon, float minPt) 
+//------------------------------------------------------------------------------
+// isFiducialMuon
+//------------------------------------------------------------------------------
+bool FiducialXS::isFiducialMuon(unsigned int iMuon) 
 {
-  TLorentzVector lep;
-  lep.SetPxPyPzE(T_Muon_Px->at(iMuon), T_Muon_Py->at(iMuon),
-                 T_Muon_Pz->at(iMuon), T_Muon_Energy->at(iMuon));
-  if (lep.Pt() < minPt)            return false;
-  if (TMath::Abs(lep.Eta()) > 2.4) return false;
-  
-  // POG Tight Muons definition              
-  if (!T_Muon_IsGlobalMuon->at(iMuon)                            ) return false;
-  if (!T_Muon_IsPFMuon->at(iMuon)                                ) return false;
-  if (T_Muon_NormChi2GTrk->at(iMuon)                       >= 10.) return false;
-  if (T_Muon_NValidHitsGTrk->at(iMuon)                     <= 0  ) return false;
-  if (T_Muon_NumOfMatchedStations->at(iMuon)               <= 1  ) return false;                     
-  //if (TMath::Abs(T_Muon_IPwrtAveBSInTrack->at(iMuon))      >= 0.2) return false; 
-  //if (TMath::Abs(T_Muon_vz->at(iMuon) - T_Vertex_z->at(0)) >= 0.5) return false;
-  if (TMath::Abs(T_Muon_dxyInTrack->at(iMuon))             >= 0.2) return false; 
-  if (TMath::Abs(T_Muon_dzInTrack ->at(iMuon))             >= 0.5) return false;
-  if (T_Muon_NLayers->at(iMuon)                            <= 5  ) return false;
-  if (T_Muon_NValidPixelHitsInTrk->at(iMuon)               <= 0  ) return false;
+  bool isFiducial = true;
 
-  float relIso = muonIsolation(iMuon);
-  
-  if (relIso > 0.12) return false;
-  
-  return true;
-}
+  isFiducial &= (T_Muon_Pt->at(iMuon)        > 20.);
+  isFiducial &= (fabs(T_Muon_Eta->at(iMuon)) < 2.4);
 
-bool FiducialXS::isLooseMuon( unsigned iMuon, float minPt) 
-{
-  TLorentzVector lep;
-  lep.SetPxPyPzE(T_Muon_Px->at(iMuon), T_Muon_Py->at(iMuon),
-                 T_Muon_Pz->at(iMuon), T_Muon_Energy->at(iMuon));
-  if (lep.Pt() < minPt)            return false;
-  if (TMath::Abs(lep.Eta()) > 2.4) return false;
-  float relIso = muonIsolation(iMuon);
-  if (relIso > 0.20)               return false; 
-  if (T_Muon_IsPFMuon->at(iMuon) == 0) return false;
-  if (T_Muon_IsGlobalMuon->at(iMuon) == 0 && T_Muon_IsTrackerMuonArbitrated->at(iMuon) == 0) return false; 
-  return true;
+  return isFiducial;
 }
 
 
-float FiducialXS::muonIsolation(unsigned iMuon)
+//------------------------------------------------------------------------------
+// isTightMuon
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonId2015#Tight_Muon
+//------------------------------------------------------------------------------
+bool FiducialXS::isTightMuon(unsigned int iMuon) 
 {
-  float isolation = T_Muon_chargedHadronIsoR04->at(iMuon) +
+  bool isTight = true;
+
+  isTight &= (T_Muon_IsGlobalMuon->at(iMuon)              );
+  isTight &= (T_Muon_IsPFMuon->at(iMuon)                  );
+  isTight &= (T_Muon_NormChi2GTrk->at(iMuon)         < 10.);
+  isTight &= (T_Muon_NValidHitsGTrk->at(iMuon)       > 0  );
+  isTight &= (T_Muon_NumOfMatchedStations->at(iMuon) > 1  );                     
+  isTight &= (fabs(T_Muon_dxyInTrack->at(iMuon))     < 0.2); 
+  isTight &= (fabs(T_Muon_dzInTrack ->at(iMuon))     < 0.5);
+  isTight &= (T_Muon_NValidPixelHitsInTrk->at(iMuon) > 0  );
+  isTight &= (T_Muon_NLayers->at(iMuon)              > 5  );
+
+  return isTight;
+}
+
+
+//------------------------------------------------------------------------------
+// isLooseMuon
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonId2015#Loose_Muon
+//------------------------------------------------------------------------------
+bool FiducialXS::isLooseMuon(unsigned int iMuon) 
+{
+  bool isLoose = true;
+
+  isLoose &= (T_Muon_IsPFMuon->at(iMuon));
+  isLoose &= (T_Muon_IsGlobalMuon->at(iMuon) || T_Muon_IsTrackerMuonArbitrated->at(iMuon));
+
+  return isLoose;
+}
+
+
+//------------------------------------------------------------------------------
+// muonIsolation
+//------------------------------------------------------------------------------
+float FiducialXS::muonIsolation(unsigned int iMuon)
+{
+  float isolation =
+    T_Muon_chargedHadronIsoR04->at(iMuon) +
     std::max(0.0,
 	     T_Muon_neutralHadronIsoR04->at(iMuon) +
 	     T_Muon_photonIsoR04->at(iMuon) -
@@ -351,112 +369,121 @@ float FiducialXS::muonIsolation(unsigned iMuon)
 }
 
 
-bool FiducialXS::isTightElec(unsigned int iElec, float minPt){
-  
-  TLorentzVector lep( T_Elec_Px->at(iElec), T_Elec_Py->at(iElec),
-                      T_Elec_Pz->at(iElec), T_Elec_Energy->at(iElec));
-  
-  float sceta = TMath::Abs(T_Elec_SC_Eta->at(iElec));
-  if (sceta > 1.4442 && sceta < 1.566) return false;
-  if (lep.Pt() < minPt)                return false;
-  if (TMath::Abs(lep.Eta()) > 2.5)     return false;
-
-  float relIso =  elecIsolation(iElec);
-
-  // Medium ID requirements
-  bool passMediumID = false;
-  if(TMath::Abs(T_Elec_SC_Eta->at(iElec)) < 1.479) {  //Barrel electron
-    if(T_Elec_sigmaIetaIetaFull5by5->at(iElec)              < 0.010399 && 
-       TMath::Abs(T_Elec_deltaEtaIn->at(iElec))             < 0.007641 && 
-       TMath::Abs(T_Elec_deltaPhiIn->at(iElec))             < 0.032643 &&    
-       T_Elec_HtoE->at(iElec)                               < 0.060662 && 
-       relIso                                               < 0.097213 &&
-       TMath::Abs( 1.0/T_Elec_ecalEnergy->at(iElec) - 
-                  T_Elec_eSuperClusterOverP->at(iElec) / 
-                  T_Elec_ecalEnergy->at(iElec))             < 0.153897 &&
-       TMath::Abs(T_Elec_IPwrtPV->at(iElec))                < 0.011811 && 
-       //TMath::Abs(T_Elec_vz->at(iElec) - T_Vertex_z->at(0)) < 0.070775 &&
-       TMath::Abs(T_Elec_dzwrtPV->at(iElec))                < 0.070775 &&
-       T_Elec_nLost->at(iElec)                              <= 1       && 
-       T_Elec_passConversionVeto->at(iElec)                 > 0 )
-      passMediumID = true;
-  }
-  else {
-    if(T_Elec_sigmaIetaIetaFull5by5->at(iElec)              < 0.029524 && 
-       TMath::Abs(T_Elec_deltaEtaIn->at(iElec))             < 0.009285 && 
-       TMath::Abs(T_Elec_deltaPhiIn->at(iElec))             < 0.042447 &&    
-       T_Elec_HtoE->at(iElec)                               < 0.104263 && 
-       relIso                                               < 0.116708 &&
-       TMath::Abs( 1.0/T_Elec_ecalEnergy->at(iElec) - 
-       T_Elec_eSuperClusterOverP->at(iElec) /
-       T_Elec_ecalEnergy->at(iElec))                        < 0.137468 &&
-       TMath::Abs(T_Elec_IPwrtPV->at(iElec))                < 0.051682 && 
-       //TMath::Abs(T_Elec_vz->at(iElec) - T_Vertex_z->at(0)) < 0.180720 &&
-       TMath::Abs(T_Elec_dzwrtPV->at(iElec))                < 0.180720 &&
-       T_Elec_nLost->at(iElec)                              <= 1       && 
-       T_Elec_passConversionVeto->at(iElec)                 > 0 )
-       passMediumID = true;
-  }
-  
-  if (!passMediumID) return false;
-   
-  return true;
-}
-
-bool FiducialXS::isLooseElec(unsigned int iElec, float minPt){
-  
-  TLorentzVector lep( T_Elec_Px->at(iElec), T_Elec_Py->at(iElec),
-                      T_Elec_Pz->at(iElec), T_Elec_Energy->at(iElec));
-  
-  float sceta = TMath::Abs(T_Elec_SC_Eta->at(iElec));
-  if (sceta > 1.4442 && sceta < 1.566) return false;
-  if (lep.Pt() < minPt)                return false;
-  if (TMath::Abs(lep.Eta()) > 2.5)     return false;
-
-  float relIso =  elecIsolation(iElec);
-
-  bool passVetoID = false;
-  // veto ID requirements
-  if(TMath::Abs(T_Elec_SC_Eta->at(iElec)) < 1.479) {  //Barrel electron
-    if(T_Elec_sigmaIetaIetaFull5by5->at(iElec)              < 0.011100 &&
-       TMath::Abs(T_Elec_deltaEtaIn->at(iElec))             < 0.016315 && 
-       TMath::Abs(T_Elec_deltaPhiIn->at(iElec))             < 0.252044 &&       
-       T_Elec_HtoE->at(iElec)                               < 0.345843 && 
-       relIso                                               < 0.164369 &&
-       ( 1.0/T_Elec_ecalEnergy->at(iElec) -
-         T_Elec_eSuperClusterOverP->at(iElec) /
-         T_Elec_ecalEnergy->at(iElec))                      < 0.248070 &&
-       TMath::Abs(T_Elec_IPwrtPV->at(iElec))                < 0.060279 && 
-       TMath::Abs(T_Elec_dzwrtPV->at(iElec))                < 0.800538 &&
-       T_Elec_nLost->at(iElec)                              <= 2       && 
-       T_Elec_passConversionVeto->at(iElec)                 > 0 )
-      passVetoID = true;
-  }
-  else {
-    if(T_Elec_sigmaIetaIetaFull5by5->at(iElec)              < 0.033987 && 
-       TMath::Abs(T_Elec_deltaEtaIn->at(iElec))             < 0.010671 && 
-       TMath::Abs(T_Elec_deltaPhiIn->at(iElec))             < 0.245263 &&    
-       T_Elec_HtoE->at(iElec)                               < 0.134691 && 
-       relIso                                               < 0.212604 &&
-       ( 1.0/T_Elec_ecalEnergy->at(iElec) -
-         T_Elec_eSuperClusterOverP->at(iElec) /
-         T_Elec_ecalEnergy->at(iElec))                      < 0.157160 &&
-       TMath::Abs(T_Elec_IPwrtPV->at(iElec))                < 0.273097 && 
-       TMath::Abs(T_Elec_dzwrtPV->at(iElec))                < 0.885860 &&
-       T_Elec_nLost->at(iElec)                              <= 3       && 
-       T_Elec_passConversionVeto->at(iElec)                 > 0 )
-       passVetoID = true;
-  }  
-  
-  if (!passVetoID) return false;
-  
-  return true;
-}
-
-
-float FiducialXS::elecIsolation(unsigned iElec)
+//------------------------------------------------------------------------------
+// isFiducialElec
+//------------------------------------------------------------------------------
+bool FiducialXS::isFiducialElec(unsigned int iElec)
 {
-  float isolation = T_Elec_sumChargedHadronPt->at(iElec) +
+  bool isFiducial = true;
+
+  isFiducial &= (T_Elec_Pt->at(iElec)        > 20.);
+  isFiducial &= (fabs(T_Elec_Eta->at(iElec)) < 2.5);
+
+  return isFiducial;
+}
+
+
+//------------------------------------------------------------------------------
+// isMediumElec
+// https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=14#PHYS14_selection_all_conditions
+//------------------------------------------------------------------------------
+bool FiducialXS::isMediumElec(unsigned int iElec)
+{
+  float sceta = fabs(T_Elec_SC_Eta->at(iElec));
+
+  if (sceta > 1.4442 && sceta < 1.566) return false;
+
+  float relIso =  elecIsolation(iElec);
+
+  float ooEmooP = fabs(1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
+
+  bool isMedium = false;
+  
+  if (sceta < 1.479) {
+    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.010399 && 
+	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.007641 && 
+	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.032643 &&    
+	T_Elec_HtoE->at(iElec)                  < 0.060662 && 
+	relIso                                  < 0.097213 &&
+	ooEmooP                                 < 0.153897 &&
+	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.011811 && 
+	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.070775 &&
+	T_Elec_nLost->at(iElec)                 < 2        && 
+	T_Elec_passConversionVeto->at(iElec)    > 0)
+      isMedium = true;
+  }
+  else {
+    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.029524 && 
+	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.009285 && 
+	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.042447 &&    
+	T_Elec_HtoE->at(iElec)                  < 0.104263 && 
+	relIso                                  < 0.116708 &&
+	ooEmooP                                 < 0.137468 &&
+	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.051682 && 
+	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.180720 &&
+	T_Elec_nLost->at(iElec)                 < 2        && 
+	T_Elec_passConversionVeto->at(iElec)    > 0)
+      isMedium = true;
+  }
+  
+  return isMedium;
+}
+
+
+//------------------------------------------------------------------------------
+// isVetoElec
+// https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=14#PHYS14_selection_all_conditions
+//------------------------------------------------------------------------------
+bool FiducialXS::isVetoElec(unsigned int iElec)
+{
+  float sceta = fabs(T_Elec_SC_Eta->at(iElec));
+
+  if (sceta > 1.4442 && sceta < 1.566) return false;
+
+  float relIso = elecIsolation(iElec);
+
+  float ooEmooP = fabs(1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
+
+  bool isVeto = false;
+
+  if (sceta < 1.479) {
+    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.011100 &&
+	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.016315 && 
+	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.252044 &&       
+	T_Elec_HtoE->at(iElec)                  < 0.345843 && 
+	relIso                                  < 0.164369 &&
+	ooEmooP                                 < 0.248070 &&
+	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.060279 && 
+	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.800538 &&
+	T_Elec_nLost->at(iElec)                 < 3        && 
+	T_Elec_passConversionVeto->at(iElec)    > 0)
+      isVeto = true;
+  }
+  else {
+    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.033987 && 
+	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.010671 && 
+	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.245263 &&    
+	T_Elec_HtoE->at(iElec)                  < 0.134691 && 
+	relIso                                  < 0.212604 &&
+	ooEmooP                                 < 0.157160 &&
+	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.273097 && 
+	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.885860 &&
+	T_Elec_nLost->at(iElec)                 < 4        && 
+	T_Elec_passConversionVeto->at(iElec)    > 0)
+      isVeto = true;
+  }
+  
+  return isVeto;
+}
+
+
+//------------------------------------------------------------------------------
+// elecIsolation
+//------------------------------------------------------------------------------
+float FiducialXS::elecIsolation(unsigned int iElec)
+{
+  float isolation =
+    T_Elec_sumChargedHadronPt->at(iElec) +
     std::max(0.0,
 	     T_Elec_sumNeutralHadronEt->at(iElec) +
 	     T_Elec_sumPhotonEt->at(iElec) -
@@ -468,16 +495,24 @@ float FiducialXS::elecIsolation(unsigned iElec)
 }
 
 
-bool FiducialXS::passJetID(unsigned iJet) {
+//------------------------------------------------------------------------------
+// passJetID
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
+//------------------------------------------------------------------------------
+bool FiducialXS::passJetID(unsigned int iJet)
+{
+  Bool_t jetid = true;
 
-  if ( !(T_JetAKCHS_nDaughters->at(iJet)        > 1   ) ) return false;
-  if ( !(T_JetAKCHS_NeutHadEnergyFrac->at(iJet) < 0.99) ) return false;
-  if ( !(T_JetAKCHS_NeutEmEnergyFrac ->at(iJet) < 0.99) ) return false;
-  if (TMath::Abs(T_JetAKCHS_Eta->at(iJet)) < 2.5){
-  if ( !(T_JetAKCHS_CharEmEnergyFrac->at(iJet)  < 0.99) ) return false;
-  if ( !(T_JetAKCHS_CharHadEnergyFrac->at(iJet) > 0.00) ) return false;
-  if ( !(T_JetAKCHS_ChargedMultiplicity->at(iJet) > 0 ) ) return false;
-  return true;
-  }
-  return false;
+  jetid &= (T_JetAKCHS_nDaughters->at(iJet)        > 1   );
+  jetid &= (T_JetAKCHS_NeutHadEnergyFrac->at(iJet) < 0.99);
+  jetid &= (T_JetAKCHS_NeutEmEnergyFrac ->at(iJet) < 0.99);
+
+  if (fabs(T_JetAKCHS_Eta->at(iJet)) < 2.5)
+    {
+      jetid &= (T_JetAKCHS_CharEmEnergyFrac->at(iJet)    < 0.99);
+      jetid &= (T_JetAKCHS_CharHadEnergyFrac->at(iJet)   > 0.  );
+      jetid &= (T_JetAKCHS_ChargedMultiplicity->at(iJet) > 0   );
+    }
+
+  return jetid;
 }
