@@ -395,7 +395,7 @@ bool FiducialXS::isMediumElec(unsigned int iElec)
 
   float relIso =  elecIsolation(iElec);
 
-  float ooEmooP = fabs(1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
+  float ooEmooP = (1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
 
   bool isMedium = false;
   
@@ -405,7 +405,7 @@ bool FiducialXS::isMediumElec(unsigned int iElec)
 	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.032643 &&    
 	T_Elec_HtoE->at(iElec)                  < 0.060662 && 
 	relIso                                  < 0.097213 &&
-	ooEmooP                                 < 0.153897 &&
+	fabs(ooEmooP)                           < 0.153897 &&
 	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.011811 && 
 	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.070775 &&
 	T_Elec_nLost->at(iElec)                 < 2        && 
@@ -418,7 +418,7 @@ bool FiducialXS::isMediumElec(unsigned int iElec)
 	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.042447 &&    
 	T_Elec_HtoE->at(iElec)                  < 0.104263 && 
 	relIso                                  < 0.116708 &&
-	ooEmooP                                 < 0.137468 &&
+	fabs(ooEmooP)                           < 0.137468 &&
 	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.051682 && 
 	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.180720 &&
 	T_Elec_nLost->at(iElec)                 < 2        && 
@@ -442,7 +442,7 @@ bool FiducialXS::isVetoElec(unsigned int iElec)
 
   float relIso = elecIsolation(iElec);
 
-  float ooEmooP = fabs(1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
+  float ooEmooP = (1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
 
   bool isVeto = false;
 
@@ -452,7 +452,7 @@ bool FiducialXS::isVetoElec(unsigned int iElec)
 	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.252044 &&       
 	T_Elec_HtoE->at(iElec)                  < 0.345843 && 
 	relIso                                  < 0.164369 &&
-	ooEmooP                                 < 0.248070 &&
+	fabs(ooEmooP)                           < 0.248070 &&
 	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.060279 && 
 	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.800538 &&
 	T_Elec_nLost->at(iElec)                 < 3        && 
@@ -465,7 +465,7 @@ bool FiducialXS::isVetoElec(unsigned int iElec)
 	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.245263 &&    
 	T_Elec_HtoE->at(iElec)                  < 0.134691 && 
 	relIso                                  < 0.212604 &&
-	ooEmooP                                 < 0.157160 &&
+	fabs(ooEmooP)                           < 0.157160 &&
 	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.273097 && 
 	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.885860 &&
 	T_Elec_nLost->at(iElec)                 < 4        && 
