@@ -27,6 +27,10 @@ Extract the final values
     hadd -f rootfiles/fiducial.root rootfiles/fiducial_*.root
     root -l -b -q extractFiducialXS.C
 
+
+Results
+====
+
     --------------------------------------------------
      N(events)                             = 25446992
     --------------------------------------------------
