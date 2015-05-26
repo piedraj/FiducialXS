@@ -337,7 +337,7 @@ public :
 //   vector<float>   *T_JetAKCHS_Tag_HighEffTC;
    vector<float>   *T_JetAKCHS_Tag_CombInclusiveSVtxV2;
 //   vector<float>   *T_JetAKCHS_Tag_CombMVA;
-//   vector<float>   *T_JetAKCHS_Tag_CombSVtx;
+   vector<float>   *T_JetAKCHS_Tag_CombSVtx;
 //   vector<float>   *T_JetAKCHS_Tag_pfCombinedSVtx;
 //   vector<float>   *T_JetAKCHS_Tag_JetBProb;
 //   vector<float>   *T_JetAKCHS_Tag_JetProb;
@@ -724,7 +724,7 @@ public :
 //   TBranch        *b_T_JetAKCHS_Tag_HighEffTC;   //!
    TBranch        *b_T_JetAKCHS_Tag_CombInclusiveSVtxV2;   //!
 //   TBranch        *b_T_JetAKCHS_Tag_CombMVA;   //!
-//   TBranch        *b_T_JetAKCHS_Tag_CombSVtx;   //!
+   TBranch        *b_T_JetAKCHS_Tag_CombSVtx;   //!
 //   TBranch        *b_T_JetAKCHS_Tag_pfCombinedSVtx;   //!
 //   TBranch        *b_T_JetAKCHS_Tag_JetBProb;   //!
 //   TBranch        *b_T_JetAKCHS_Tag_JetProb;   //!
@@ -844,16 +844,18 @@ FiducialXS::FiducialXS(Int_t index, TTree *tree) : fChain(0)
 
       if (index < 0)
       	{
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_0.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_1.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_2.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_3.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_4.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_5.root/demo/Tree");
+	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_0.root/demo/Tree");
+	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_1.root/demo/Tree");
+	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_2.root/demo/Tree");
+	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_3.root/demo/Tree");
+	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_4.root/demo/Tree");
+	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_5.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_NoSkim_0.root/demo/Tree");
 	}
       else
 	{
-	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_%d.root/demo/Tree", index));
+	  //	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_%d.root/demo/Tree", index));
+	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_NoSkim_%d.root/demo/Tree", index));
 	}
 
       tree = chain;
@@ -1190,7 +1192,7 @@ void FiducialXS::Init(TTree *tree)
 //   T_JetAKCHS_Tag_HighEffTC = 0;
    T_JetAKCHS_Tag_CombInclusiveSVtxV2 = 0;
 //   T_JetAKCHS_Tag_CombMVA = 0;
-//   T_JetAKCHS_Tag_CombSVtx = 0;
+   T_JetAKCHS_Tag_CombSVtx = 0;
 //   T_JetAKCHS_Tag_pfCombinedSVtx = 0;
 //   T_JetAKCHS_Tag_JetBProb = 0;
 //   T_JetAKCHS_Tag_JetProb = 0;
@@ -1552,7 +1554,7 @@ void FiducialXS::Init(TTree *tree)
 //   fChain->SetBranchAddress("T_JetAKCHS_Tag_HighEffTC", &T_JetAKCHS_Tag_HighEffTC, &b_T_JetAKCHS_Tag_HighEffTC);
    fChain->SetBranchAddress("T_JetAKCHS_Tag_CombInclusiveSVtxV2", &T_JetAKCHS_Tag_CombInclusiveSVtxV2, &b_T_JetAKCHS_Tag_CombInclusiveSVtxV2);
 //   fChain->SetBranchAddress("T_JetAKCHS_Tag_CombMVA", &T_JetAKCHS_Tag_CombMVA, &b_T_JetAKCHS_Tag_CombMVA);
-//   fChain->SetBranchAddress("T_JetAKCHS_Tag_CombSVtx", &T_JetAKCHS_Tag_CombSVtx, &b_T_JetAKCHS_Tag_CombSVtx);
+   fChain->SetBranchAddress("T_JetAKCHS_Tag_CombSVtx", &T_JetAKCHS_Tag_CombSVtx, &b_T_JetAKCHS_Tag_CombSVtx);
 //   fChain->SetBranchAddress("T_JetAKCHS_Tag_pfCombinedSVtx", &T_JetAKCHS_Tag_pfCombinedSVtx, &b_T_JetAKCHS_Tag_pfCombinedSVtx);
 //   fChain->SetBranchAddress("T_JetAKCHS_Tag_JetBProb", &T_JetAKCHS_Tag_JetBProb, &b_T_JetAKCHS_Tag_JetBProb);
 //   fChain->SetBranchAddress("T_JetAKCHS_Tag_JetProb", &T_JetAKCHS_Tag_JetProb, &b_T_JetAKCHS_Tag_JetProb);

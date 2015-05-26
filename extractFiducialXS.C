@@ -1,6 +1,6 @@
 void extractFiducialXS()
 {
-  TFile* file = new TFile("rootfiles/fiducial.root", "read");
+  TFile* file = new TFile("rootfiles/fiducial_0.root", "read");
 
   TH1F* h_events                         = (TH1F*)file->Get("h_events");
   TH1F* h_ttbar                          = (TH1F*)file->Get("h_ttbar");

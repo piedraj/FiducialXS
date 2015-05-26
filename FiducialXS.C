@@ -233,7 +233,8 @@ void FiducialXS::Loop(Int_t index)
 
             njet++;
 
-            bool is_bjet = T_JetAKCHS_Tag_CombInclusiveSVtxV2->at(i) > 0.423;
+	    //            bool is_bjet = T_JetAKCHS_Tag_CombInclusiveSVtxV2->at(i) > 0.423;
+            bool is_bjet = T_JetAKCHS_Tag_CombSVtx->at(i) > 0.423;
             if (is_bjet) nbjet++;
 	  }
 	}
@@ -256,6 +257,9 @@ void FiducialXS::Loop(Int_t index)
 	else if (is_ttbar_emu) h_ttbar_emu_nonfiducial_selected->Fill(1);
       }
   }
+
+
+  printf("\n");
 
 
   // Write the output

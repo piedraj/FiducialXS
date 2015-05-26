@@ -32,20 +32,20 @@ Results
 ====
 
     --------------------------------------------------
-     N(events)                             = 25446992
+     N(POWHEG events)                      = 1283520
     --------------------------------------------------
-     N(ttbar inclusive)                    = 25446992
-     N(ttbar inclusive selected)           = 189234
-     N(ttbar -> emu selected)              = 187063 (not used)
-     total efficiency eff                  =  0.74%
+     N(ttbar inclusive)                    = 1283520
+     N(ttbar inclusive selected)           = 8241
+     N(ttbar -> emu selected)              = 8154 (not used)
+     total efficiency eff                  =  0.64%
     --------------------------------------------------
-     N(ttbar -> emu)                       = 870888
-     N(ttbar -> emu fiducial)              = 455738
-     N(ttbar -> emu fiducial selected)     = 185285
-     N(ttbar -> emu non-fiducial selected) = 1778
-     fiducial efficiency eff_fid           = 40.66%
-     contamination fraction f              =  0.96%
+     N(ttbar -> emu)                       = 41473
+     N(ttbar -> emu fiducial)              = 21444
+     N(ttbar -> emu fiducial selected)     = 8052
+     N(ttbar -> emu non-fiducial selected) = 102
+     fiducial efficiency eff_fid           = 37.55%
+     contamination fraction f              =  1.27%
     --------------------------------------------------
-     xs_fid/xs = eff/eff_fid/(1+f)         = 0.0181
+     xs_fid/xs = eff/eff_fid/(1+f)         = 0.0169
     --------------------------------------------------
 
