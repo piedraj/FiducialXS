@@ -45,5 +45,5 @@ Results
      fiducial efficiency eff_fid      = 39.99%
      contamination fraction f         =  2.31%
     --------------------------------------------------
-     xs_fid/xs = N(ttbar)/N(fiducial) = 0.0166
+     xs_fid/xs = N(fiducial)/N(ttbar) = 0.0166
     --------------------------------------------------
