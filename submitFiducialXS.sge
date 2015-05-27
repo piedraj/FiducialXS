@@ -2,7 +2,7 @@
 #$ -P l.gaes
 #$ -S /bin/bash
 #$ -cwd
-#$ -t 1-6
+#$ -t 1-5
 #$ -N FiducialXS
 #$ -pe proof 4
 #$ -o job_$JOB_ID-$TASK_ID.out

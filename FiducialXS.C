@@ -12,11 +12,9 @@ TFile* output_file;
 
 TH1F* h_events;
 TH1F* h_ttbar;
-TH1F* h_ttbar_selected;
-TH1F* h_ttbar_emu;
-TH1F* h_ttbar_emu_fiducial;
-TH1F* h_ttbar_emu_fiducial_selected;
-TH1F* h_ttbar_emu_nonfiducial_selected;
+TH1F* h_ttbar_fiducial;
+TH1F* h_ttbar_fiducial_selected;
+TH1F* h_ttbar_nonfiducial_selected;
 
 
 void FiducialXS::Loop(Int_t index)
@@ -27,13 +25,11 @@ void FiducialXS::Loop(Int_t index)
 
   output_file = new TFile("rootfiles/fiducial" + suffix + ".root", "recreate");
 
-  h_events                         = new TH1F("h_events",                         "", 3, 0, 3);
-  h_ttbar                          = new TH1F("h_ttbar",                          "", 3, 0, 3);
-  h_ttbar_selected                 = new TH1F("h_ttbar_selected",                 "", 3, 0, 3);
-  h_ttbar_emu                      = new TH1F("h_ttbar_emu",                      "", 3, 0, 3);
-  h_ttbar_emu_fiducial             = new TH1F("h_ttbar_emu_fiducial",             "", 3, 0, 3);
-  h_ttbar_emu_fiducial_selected    = new TH1F("h_ttbar_emu_fiducial_selected",    "", 3, 0, 3);
-  h_ttbar_emu_nonfiducial_selected = new TH1F("h_ttbar_emu_nonfiducial_selected", "", 3, 0, 3);
+  h_events                     = new TH1F("h_events",                     "", 3, 0, 3);
+  h_ttbar                      = new TH1F("h_ttbar",                      "", 3, 0, 3);
+  h_ttbar_fiducial             = new TH1F("h_ttbar_fiducial",             "", 3, 0, 3);
+  h_ttbar_fiducial_selected    = new TH1F("h_ttbar_fiducial_selected",    "", 3, 0, 3);
+  h_ttbar_nonfiducial_selected = new TH1F("h_ttbar_nonfiducial_selected", "", 3, 0, 3);
 
 
   // Loop
@@ -139,23 +135,17 @@ void FiducialXS::Loop(Int_t index)
       }
 
 
-    // Decide if the event is emu, fiducial
+    // Decide if the event is fiducial
     //--------------------------------------------------------------------------
-    bool is_ttbar_emu = (gen_electron_pdgId * gen_muon_pdgId < 0);
+    bool is_ttbar_fiducial = true;
 
-    bool is_ttbar_emu_fiducial = is_ttbar_emu;
-    
-    if (is_ttbar_emu)
-      {
-	is_ttbar_emu_fiducial &= (gen_electron.Pt() > 20);
-	is_ttbar_emu_fiducial &= (fabs(gen_electron.Eta()) < 2.4);
-	is_ttbar_emu_fiducial &= (gen_muon.Pt() > 20);
-	is_ttbar_emu_fiducial &= (fabs(gen_muon.Eta()) < 2.4);
-      }
+    is_ttbar_fiducial &= (gen_electron_pdgId * gen_muon_pdgId < 0);
+    is_ttbar_fiducial &= (gen_electron.Pt() > 20);
+    is_ttbar_fiducial &= (fabs(gen_electron.Eta()) < 2.4);
+    is_ttbar_fiducial &= (gen_muon.Pt() > 20);
+    is_ttbar_fiducial &= (fabs(gen_muon.Eta()) < 2.4);
 
-
-    if (is_ttbar_emu)          h_ttbar_emu->Fill(1);
-    if (is_ttbar_emu_fiducial) h_ttbar_emu_fiducial->Fill(1);
+    if (is_ttbar_fiducial) h_ttbar_fiducial->Fill(1);
 
 
     // Get the good reconstructed leptons
@@ -233,8 +223,8 @@ void FiducialXS::Loop(Int_t index)
 
             njet++;
 
-	    //            bool is_bjet = T_JetAKCHS_Tag_CombInclusiveSVtxV2->at(i) > 0.423;
-            bool is_bjet = T_JetAKCHS_Tag_CombSVtx->at(i) > 0.423;
+	    bool is_bjet = T_JetAKCHS_Tag_CombInclusiveSVtxV2->at(i) > 0.423;
+
             if (is_bjet) nbjet++;
 	  }
 	}
@@ -251,10 +241,8 @@ void FiducialXS::Loop(Int_t index)
 	njet > 1 &&
 	nbjet > 0)
       {
-	h_ttbar_selected->Fill(1);
-
-	if (is_ttbar_emu_fiducial) h_ttbar_emu_fiducial_selected->Fill(1);
-	else if (is_ttbar_emu) h_ttbar_emu_nonfiducial_selected->Fill(1);
+	if (is_ttbar_fiducial) h_ttbar_fiducial_selected   ->Fill(1);
+	else                   h_ttbar_nonfiducial_selected->Fill(1);
       }
   }
 

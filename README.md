@@ -17,7 +17,8 @@ Get the material
 Submit the jobs
 ====
 
-    root -l -b -q 'runFiducialXS.C(-999)'
+    root -l -b -q runFiducialXS.C
+    rm -rf rootfiles/fiducial_*.root
     qsub submitFiducialXS.sge
 
 
@@ -32,20 +33,17 @@ Results
 ====
 
     --------------------------------------------------
-     N(POWHEG events)                      = 1283520
+     N(events)                        = 4983143
     --------------------------------------------------
-     N(ttbar inclusive)                    = 1283520
-     N(ttbar inclusive selected)           = 8241
-     N(ttbar -> emu selected)              = 8154 (not used)
-     total efficiency eff                  =  0.64%
+     N(ttbar)                         = 4983143
+     N(ttbar selected)                = 33904
+     total efficiency eff             =  0.68%
     --------------------------------------------------
-     N(ttbar -> emu)                       = 41473
-     N(ttbar -> emu fiducial)              = 21444
-     N(ttbar -> emu fiducial selected)     = 8052
-     N(ttbar -> emu non-fiducial selected) = 102
-     fiducial efficiency eff_fid           = 37.55%
-     contamination fraction f              =  1.27%
+     N(fiducial)                      = 82861
+     N(fiducial selected)             = 33138
+     N(non-fiducial selected)         = 766
+     fiducial efficiency eff_fid      = 39.99%
+     contamination fraction f         =  2.31%
     --------------------------------------------------
-     xs_fid/xs = eff/eff_fid/(1+f)         = 0.0169
+     xs_fid/xs = N(ttbar)/N(fiducial) = 0.0166
     --------------------------------------------------
-

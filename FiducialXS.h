@@ -844,18 +844,15 @@ FiducialXS::FiducialXS(Int_t index, TTree *tree) : fChain(0)
 
       if (index < 0)
       	{
-	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_0.root/demo/Tree");
-	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_1.root/demo/Tree");
-	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_2.root/demo/Tree");
-	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_3.root/demo/Tree");
-	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_4.root/demo/Tree");
-	  //	  chain->Add("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_5.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_NoSkim_0.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_0.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_1.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_2.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_3.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_4.root/demo/Tree");
 	}
       else
 	{
-	  //	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesPHYS14/PU20bx25/Tree_TTJets_MadSpin_NoSkim_%d.root/demo/Tree", index));
-	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_NoSkim_%d.root/demo/Tree", index));
+	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_%d.root/demo/Tree", index));
 	}
 
       tree = chain;
