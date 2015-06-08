@@ -26,7 +26,7 @@ public :
 //   Int_t           T_Event_EventNumber;
 //   Int_t           T_Event_LuminosityBlock;
 //   Int_t           T_Event_processID;
-//   Float_t         T_Event_Rho;
+   Float_t         T_Event_Rho;
 //   Int_t           T_Event_nPU;
 //   Int_t           T_Event_nPUm;
 //   Int_t           T_Event_nPUp;
@@ -413,7 +413,7 @@ public :
 //   TBranch        *b_T_Event_EventNumber;   //!
 //   TBranch        *b_T_Event_LuminosityBlock;   //!
 //   TBranch        *b_T_Event_processID;   //!
-//   TBranch        *b_T_Event_Rho;   //!
+   TBranch        *b_T_Event_Rho;   //!
 //   TBranch        *b_T_Event_nPU;   //!
 //   TBranch        *b_T_Event_nPUm;   //!
 //   TBranch        *b_T_Event_nPUp;   //!
@@ -809,11 +809,9 @@ public :
    // Additional member functions
    bool  isFiducialMuon(unsigned int iMuon);
    bool  isTightMuon   (unsigned int iMuon);
-   bool  isLooseMuon   (unsigned int iMuon);
    float muonIsolation (unsigned int iMuon);
    bool  isFiducialElec(unsigned int iElec);
    bool  isMediumElec  (unsigned int iElec);
-   bool  isVetoElec    (unsigned int iElec);
    float elecIsolation (unsigned int iElec);
    bool  passJetID     (unsigned int iJet);
 };
@@ -844,15 +842,15 @@ FiducialXS::FiducialXS(Int_t index, TTree *tree) : fChain(0)
 
       if (index < 0)
       	{
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_0.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_1.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_2.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_3.root/demo/Tree");
-	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_4.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/Tree_TTbar_Powheg_0.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/Tree_TTbar_Powheg_1.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/Tree_TTbar_Powheg_2.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/Tree_TTbar_Powheg_3.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/Tree_TTbar_Powheg_4.root/demo/Tree");
 	}
       else
 	{
-	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/NoSkim/Tree_TTbar_Powheg_%d.root/demo/Tree", index));
+	  chain->Add(Form("/gpfs/csic_projects/tier3data/TreesDR74X/50ns/Tree_TTbar_Powheg_%d.root/demo/Tree", index));
 	}
 
       tree = chain;
@@ -1240,7 +1238,7 @@ void FiducialXS::Init(TTree *tree)
 //   fChain->SetBranchAddress("T_Event_EventNumber", &T_Event_EventNumber, &b_T_Event_EventNumber);
 //   fChain->SetBranchAddress("T_Event_LuminosityBlock", &T_Event_LuminosityBlock, &b_T_Event_LuminosityBlock);
 //   fChain->SetBranchAddress("T_Event_processID", &T_Event_processID, &b_T_Event_processID);
-//   fChain->SetBranchAddress("T_Event_Rho", &T_Event_Rho, &b_T_Event_Rho);
+   fChain->SetBranchAddress("T_Event_Rho", &T_Event_Rho, &b_T_Event_Rho);
 //   fChain->SetBranchAddress("T_Event_nPU", &T_Event_nPU, &b_T_Event_nPU);
 //   fChain->SetBranchAddress("T_Event_nPUm", &T_Event_nPUm, &b_T_Event_nPUm);
 //   fChain->SetBranchAddress("T_Event_nPUp", &T_Event_nPUp, &b_T_Event_nPUp);

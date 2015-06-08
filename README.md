@@ -20,6 +20,7 @@ Submit the jobs
     root -l -b -q runFiducialXS.C
     rm -rf rootfiles/fiducial_*.root
     qsub submitFiducialXS.sge
+    qstat -u piedra
 
 
 Extract the final values
@@ -33,18 +34,17 @@ Results
 ====
 
     --------------------------------------------------
-     N(events)                        = 4983143
+     N(events)                        = 4995994
     --------------------------------------------------
-     N(ttbar)                         = 4983143
-     N(ttbar selected)                = 33904
-     total efficiency eff             =  0.68%
+     N(ttbar)                         = 4995994
+     N(ttbar selected)                = 33211
+     total efficiency eff             =  0.66%
     --------------------------------------------------
-     N(fiducial)                      = 82861
-     N(fiducial selected)             = 33138
-     N(non-fiducial selected)         = 766
-     fiducial efficiency eff_fid      = 39.99%
-     contamination fraction f         =  2.31%
+     N(fiducial)                      = 83107
+     N(fiducial selected)             = 32497
+     N(non-fiducial selected)         = 714
+     fiducial efficiency eff_fid      = 39.10%
+     contamination fraction f         =  2.20%
     --------------------------------------------------
-     xs_fid/xs = N(fiducial)/N(ttbar) = 0.0166
+     xs_fid/xs = N(ttbar)/N(fiducial) = 0.0166
     --------------------------------------------------
-

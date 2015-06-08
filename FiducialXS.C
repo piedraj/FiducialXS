@@ -156,8 +156,6 @@ void FiducialXS::Loop(Int_t index)
     std::vector<int> cElec;
     std::vector<int> cMuon;
 
-    int n_loose_lepton = 0;
-
     // Electron loop
     for (UInt_t i=0; i<T_Elec_Pt->size(); i++) {
 
@@ -171,7 +169,6 @@ void FiducialXS::Loop(Int_t index)
 	  vElec.push_back(gElec);
 	  cElec.push_back(T_Elec_Charge->at(i));
 	}
-      else if (isVetoElec(i)) n_loose_lepton++;
     }
 
     // Muon loop
@@ -187,7 +184,6 @@ void FiducialXS::Loop(Int_t index)
 	  vMuon.push_back(gMuon);
 	  cMuon.push_back(T_Muon_Charge->at(i));
 	}
-      else if (isLooseMuon(i) && muonIsolation(i) < 0.20) n_loose_lepton++;
     }
 
 
@@ -201,7 +197,7 @@ void FiducialXS::Loop(Int_t index)
     int   njet          = 0;
     int   nbjet         = 0;
 
-    if (n_elec == 1 && n_muon == 1)
+    if (n_elec > 0 && n_muon > 0)
       {
 	opposite_sign = (cElec[0] * cMuon[0] < 0);
 
@@ -233,9 +229,8 @@ void FiducialXS::Loop(Int_t index)
     
     // Get the selected yields
     //--------------------------------------------------------------------------
-    if (n_elec == 1 &&
-	n_muon == 1 &&
-	n_loose_lepton == 0 &&
+    if (n_elec > 0 &&
+	n_muon > 0 &&
 	opposite_sign &&
 	mll > 20 &&
 	njet > 1 &&
@@ -273,7 +268,7 @@ bool FiducialXS::isFiducialMuon(unsigned int iMuon)
 
 //------------------------------------------------------------------------------
 // isTightMuon
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonId2015#Tight_Muon
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonId2015
 //------------------------------------------------------------------------------
 bool FiducialXS::isTightMuon(unsigned int iMuon) 
 {
@@ -294,31 +289,16 @@ bool FiducialXS::isTightMuon(unsigned int iMuon)
 
 
 //------------------------------------------------------------------------------
-// isLooseMuon
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonId2015#Loose_Muon
-//------------------------------------------------------------------------------
-bool FiducialXS::isLooseMuon(unsigned int iMuon) 
-{
-  bool isLoose = true;
-
-  isLoose &= (T_Muon_IsPFMuon->at(iMuon));
-  isLoose &= (T_Muon_IsGlobalMuon->at(iMuon) || T_Muon_IsTrackerMuonArbitrated->at(iMuon));
-
-  return isLoose;
-}
-
-
-//------------------------------------------------------------------------------
 // muonIsolation
 //------------------------------------------------------------------------------
 float FiducialXS::muonIsolation(unsigned int iMuon)
 {
   float isolation =
     T_Muon_chargedHadronIsoR04->at(iMuon) +
-    std::max(0.0,
-	     T_Muon_neutralHadronIsoR04->at(iMuon) +
+    std::max(float(0.0),
+	     float(T_Muon_neutralHadronIsoR04->at(iMuon) +
 	     T_Muon_photonIsoR04->at(iMuon) -
-	     0.5*T_Muon_sumPUPtR04->at(iMuon));
+		   0.5*T_Muon_sumPUPtR04->at(iMuon)));
 
   float relative_isolation = isolation / T_Muon_Pt->at(iMuon);
 
@@ -342,7 +322,7 @@ bool FiducialXS::isFiducialElec(unsigned int iElec)
 
 //------------------------------------------------------------------------------
 // isMediumElec
-// https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=14#PHYS14_selection_all_conditions
+// https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
 //------------------------------------------------------------------------------
 bool FiducialXS::isMediumElec(unsigned int iElec)
 {
@@ -350,34 +330,34 @@ bool FiducialXS::isMediumElec(unsigned int iElec)
 
   if (sceta > 1.4442 && sceta < 1.566) return false;
 
-  float relIso =  elecIsolation(iElec);
+  float relIso = elecIsolation(iElec);
 
   float ooEmooP = (1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
 
   bool isMedium = false;
-  
+
   if (sceta < 1.479) {
-    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.010399 && 
-	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.007641 && 
-	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.032643 &&    
-	T_Elec_HtoE->at(iElec)                  < 0.060662 && 
-	relIso                                  < 0.097213 &&
-	fabs(ooEmooP)                           < 0.153897 &&
-	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.011811 && 
-	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.070775 &&
+    if (fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.008925 && 
+	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.035973 &&    
+	T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.009996 && 
+	T_Elec_HtoE->at(iElec)                  < 0.050537 && 
+	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.012235 && 
+	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.042020 &&
+	fabs(ooEmooP)                           < 0.091942 &&
+	relIso                                  < 0.107587 &&
 	T_Elec_nLost->at(iElec)                 < 2        && 
 	T_Elec_passConversionVeto->at(iElec)    > 0)
       isMedium = true;
   }
   else {
-    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.029524 && 
-	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.009285 && 
-	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.042447 &&    
-	T_Elec_HtoE->at(iElec)                  < 0.104263 && 
-	relIso                                  < 0.116708 &&
-	fabs(ooEmooP)                           < 0.137468 &&
-	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.051682 && 
-	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.180720 &&
+    if (fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.007429 && 
+	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.067879 &&    
+	T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.030135 && 
+	T_Elec_HtoE->at(iElec)                  < 0.086782 && 
+	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.036719 && 
+	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.138142 &&
+	fabs(ooEmooP)                           < 0.100683 &&
+	relIso                                  < 0.113254 &&
 	T_Elec_nLost->at(iElec)                 < 2        && 
 	T_Elec_passConversionVeto->at(iElec)    > 0)
       isMedium = true;
@@ -388,63 +368,27 @@ bool FiducialXS::isMediumElec(unsigned int iElec)
 
 
 //------------------------------------------------------------------------------
-// isVetoElec
-// https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2?rev=14#PHYS14_selection_all_conditions
-//------------------------------------------------------------------------------
-bool FiducialXS::isVetoElec(unsigned int iElec)
-{
-  float sceta = fabs(T_Elec_SC_Eta->at(iElec));
-
-  if (sceta > 1.4442 && sceta < 1.566) return false;
-
-  float relIso = elecIsolation(iElec);
-
-  float ooEmooP = (1. - T_Elec_eSuperClusterOverP->at(iElec)) / T_Elec_ecalEnergy->at(iElec);
-
-  bool isVeto = false;
-
-  if (sceta < 1.479) {
-    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.011100 &&
-	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.016315 && 
-	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.252044 &&       
-	T_Elec_HtoE->at(iElec)                  < 0.345843 && 
-	relIso                                  < 0.164369 &&
-	fabs(ooEmooP)                           < 0.248070 &&
-	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.060279 && 
-	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.800538 &&
-	T_Elec_nLost->at(iElec)                 < 3        && 
-	T_Elec_passConversionVeto->at(iElec)    > 0)
-      isVeto = true;
-  }
-  else {
-    if (T_Elec_sigmaIetaIetaFull5by5->at(iElec) < 0.033987 && 
-	fabs(T_Elec_deltaEtaIn->at(iElec))      < 0.010671 && 
-	fabs(T_Elec_deltaPhiIn->at(iElec))      < 0.245263 &&    
-	T_Elec_HtoE->at(iElec)                  < 0.134691 && 
-	relIso                                  < 0.212604 &&
-	fabs(ooEmooP)                           < 0.157160 &&
-	fabs(T_Elec_IPwrtPV->at(iElec))         < 0.273097 && 
-	fabs(T_Elec_dzwrtPV->at(iElec))         < 0.885860 &&
-	T_Elec_nLost->at(iElec)                 < 4        && 
-	T_Elec_passConversionVeto->at(iElec)    > 0)
-      isVeto = true;
-  }
-  
-  return isVeto;
-}
-
-
-//------------------------------------------------------------------------------
 // elecIsolation
 //------------------------------------------------------------------------------
 float FiducialXS::elecIsolation(unsigned int iElec)
 {
+  float aeta = fabs(T_Elec_Eta->at(iElec));
+
+  float EA = -999;
+
+  if      (aeta < 0.8)                EA = 0.1013; 
+  else if (aeta >= 0.8 && aeta < 1.3) EA = 0.0988; 
+  else if (aeta >= 1.3 && aeta < 2.0) EA = 0.0572; 
+  else if (aeta >= 2.0 && aeta < 2.2) EA = 0.0842; 
+  else if (aeta >= 2.2 && aeta < 5.0) EA = 0.1530; 
+  else                                EA = 0.1530; 
+
   float isolation =
     T_Elec_sumChargedHadronPt->at(iElec) +
-    std::max(0.0,
-	     T_Elec_sumNeutralHadronEt->at(iElec) +
+    std::max(float(0.0),
+	     float(T_Elec_sumNeutralHadronEt->at(iElec) +
 	     T_Elec_sumPhotonEt->at(iElec) -
-	     0.5*T_Elec_sumPUPt->at(iElec));
+		   T_Event_Rho*EA));
 
   float relative_isolation = isolation / T_Elec_Pt->at(iElec);
 
@@ -454,7 +398,7 @@ float FiducialXS::elecIsolation(unsigned int iElec)
 
 //------------------------------------------------------------------------------
 // passJetID
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
 //------------------------------------------------------------------------------
 bool FiducialXS::passJetID(unsigned int iJet)
 {
