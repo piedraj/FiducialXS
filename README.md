@@ -1,36 +1,57 @@
-Get ROOT
+1. Get ROOT
 ====
 
     ssh -Y gridui.ifca.es -o ServerAliveInterval=240
+    cd /gpfs/csic_projects/cms/$USER
+    mkdir fiducial
+    cd fiducial
+
     source /cvmfs/cms.cern.ch/cmsset_default.sh
-    pushd /gpfs/csic_users/piedra/CMSSW_7_3_0/src
+    export SCRAM_ARCH=slc6_amd64_gcc491
+    cmsrel CMSSW_7_3_0
+    cd CMSSW_7_3_0/src
     cmsenv
-    popd
 
 
-Get the material
+2. Get the material
 ====
 
     git clone https://github.com/piedraj/FiducialXS
 
 
-Submit the jobs
+3. Submit the jobs
 ====
 
+    cd FiducialXS
     root -l -b -q runFiducialXS.C
     rm -rf rootfiles/fiducial_*.root
     qsub submitFiducialXS.sge
-    qstat -u piedra
+    qstat -u $USER
+
+Alternatively one can login to a node and run interactively
+
+    qlogin -P l.gaes
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+    cd /gpfs/csic_projects/cms/$USER/fiducial/CMSSW_7_3_0/src
+    cmsenv
+
+    cd FiducialXS
+    rm -rf rootfiles/fiducial_*.root
+    root -l -b -q 'runFiducialXS.C(0)'
+    root -l -b -q 'runFiducialXS.C(1)'
+    root -l -b -q 'runFiducialXS.C(2)'
+    root -l -b -q 'runFiducialXS.C(3)'
+    root -l -b -q 'runFiducialXS.C(4)'
 
 
-Extract the final values
+4. Extract the final values
 ====
 
     hadd -f rootfiles/fiducial.root rootfiles/fiducial_*.root
     root -l -b -q extractFiducialXS.C
 
 
-Results
+5. Results
 ====
 
     --------------------------------------------------
@@ -48,3 +69,4 @@ Results
     --------------------------------------------------
      xs_fid/xs = N(ttbar)/N(fiducial) = 0.0166
     --------------------------------------------------
+
