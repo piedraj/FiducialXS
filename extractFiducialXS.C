@@ -36,7 +36,7 @@ void extractFiducialXS()
   printf(" fiducial efficiency eff_fid      = %5.2f%s\n", 1e2 * eff_fid, "%");
   printf(" contamination fraction f         = %5.2f%s\n", 1e2 * f, "%");
   printf("--------------------------------------------------\n");
-  printf(" xs_fid/xs = N(ttbar)/N(fiducial) = %.4f\n", xs_ratio);
+  printf(" xs_fid/xs = N(fiducial)/N(ttvar) = %.4f\n", xs_ratio);
   printf("--------------------------------------------------\n");
   printf("\n");
 }

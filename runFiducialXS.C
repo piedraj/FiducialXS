@@ -5,7 +5,7 @@
 // index >  0 runs on _index.root file
 //
 //------------------------------------------------------------------------------
-void runFiducialXS(int index = -999)
+void runFiducialXS(int index = -1)
 {
   gInterpreter->LoadMacro("FiducialXS.C+");
 

@@ -16,6 +16,11 @@ TH1F* h_ttbar_fiducial;
 TH1F* h_ttbar_fiducial_selected;
 TH1F* h_ttbar_nonfiducial_selected;
 
+TH1F* h_n_gen_muon;
+TH1F* h_n_gen_muon_fiducial;
+TH1F* h_n_gen_electron;
+TH1F* h_n_gen_electron_fiducial;
+
 
 void FiducialXS::Loop(Int_t index)
 {
@@ -30,6 +35,11 @@ void FiducialXS::Loop(Int_t index)
   h_ttbar_fiducial             = new TH1F("h_ttbar_fiducial",             "", 3, 0, 3);
   h_ttbar_fiducial_selected    = new TH1F("h_ttbar_fiducial_selected",    "", 3, 0, 3);
   h_ttbar_nonfiducial_selected = new TH1F("h_ttbar_nonfiducial_selected", "", 3, 0, 3);
+
+  h_n_gen_muon              = new TH1F("h_n_gen_muon",              "", 5, 0, 5);
+  h_n_gen_muon_fiducial     = new TH1F("h_n_gen_muon_fiducial",     "", 5, 0, 5);
+  h_n_gen_electron          = new TH1F("h_n_gen_electron",          "", 5, 0, 5);
+  h_n_gen_electron_fiducial = new TH1F("h_n_gen_electron_fiducial", "", 5, 0, 5);
 
 
   // Loop
@@ -146,6 +156,39 @@ void FiducialXS::Loop(Int_t index)
     is_ttbar_fiducial &= (fabs(gen_muon.Eta()) < 2.4);
 
     if (is_ttbar_fiducial) h_ttbar_fiducial->Fill(1);
+
+
+    // Fill histograms for Kike
+    //--------------------------------------------------------------------------
+    int n_gen_muon_fiducial = 0;
+
+    for (UInt_t i=0; i<T_Gen_PromptMuon_pdgId->size(); i++) {
+	
+	gen_muon.SetPxPyPzE(T_Gen_PromptMuon_Px->at(i),
+			    T_Gen_PromptMuon_Py->at(i),
+			    T_Gen_PromptMuon_Pz->at(i),
+			    T_Gen_PromptMuon_Energy->at(i));
+	
+	if (gen_muon.Pt() > 20 && fabs(gen_muon.Eta()) < 2.4) n_gen_muon_fiducial++;
+    }
+
+    h_n_gen_muon         ->Fill(n_gen_muon);
+    h_n_gen_muon_fiducial->Fill(n_gen_muon_fiducial);
+
+    int n_gen_electron_fiducial = 0;
+
+    for (UInt_t i=0; i<T_Gen_PromptElec_pdgId->size(); i++) {
+	
+	gen_electron.SetPxPyPzE(T_Gen_PromptElec_Px->at(i),
+				T_Gen_PromptElec_Py->at(i),
+				T_Gen_PromptElec_Pz->at(i),
+				T_Gen_PromptElec_Energy->at(i));
+	
+	if (gen_electron.Pt() > 20 && fabs(gen_electron.Eta()) < 2.4) n_gen_electron_fiducial++;
+    }
+
+    h_n_gen_electron         ->Fill(n_gen_electron);
+    h_n_gen_electron_fiducial->Fill(n_gen_electron_fiducial);
 
 
     // Get the good reconstructed leptons
