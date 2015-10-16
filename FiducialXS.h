@@ -23,7 +23,7 @@ public :
 
    // Declaration of leaf types
 //   Int_t           T_Event_RunNumber;
-   Int_t           T_Event_EventNumber;
+//   Int_t           T_Event_EventNumber;
 //   Int_t           T_Event_LuminosityBlock;
 //   Int_t           T_Event_processID;
    Float_t         T_Event_Rho;
@@ -410,7 +410,7 @@ public :
 
    // List of branches
 //   TBranch        *b_T_Event_RunNumber;   //!
-   TBranch        *b_T_Event_EventNumber;   //!
+//   TBranch        *b_T_Event_EventNumber;   //!
 //   TBranch        *b_T_Event_LuminosityBlock;   //!
 //   TBranch        *b_T_Event_processID;   //!
    TBranch        *b_T_Event_Rho;   //!
@@ -843,6 +843,24 @@ FiducialXS::FiducialXS(Int_t index, TTree *tree) : fChain(0)
       if (index < 0)
       	{
 	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_0.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_1.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_2.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_3.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_4.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_5.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_6.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_7.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_8.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_9.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_10.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_11.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_12.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_13.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_14.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_15.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_16.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_17.root/demo/Tree");
+	  chain->Add("/gpfs/csic_projects/tier3data/TreesDR74X/50ns.Summer15_50nsV2_MC.db/Tree_TTbar_Powheg_18.root/demo/Tree");
 	}
       else
 	{
@@ -1231,7 +1249,7 @@ void FiducialXS::Init(TTree *tree)
    fChain->SetMakeClass(1);
 
 //   fChain->SetBranchAddress("T_Event_RunNumber", &T_Event_RunNumber, &b_T_Event_RunNumber);
-   fChain->SetBranchAddress("T_Event_EventNumber", &T_Event_EventNumber, &b_T_Event_EventNumber);
+//   fChain->SetBranchAddress("T_Event_EventNumber", &T_Event_EventNumber, &b_T_Event_EventNumber);
 //   fChain->SetBranchAddress("T_Event_LuminosityBlock", &T_Event_LuminosityBlock, &b_T_Event_LuminosityBlock);
 //   fChain->SetBranchAddress("T_Event_processID", &T_Event_processID, &b_T_Event_processID);
    fChain->SetBranchAddress("T_Event_Rho", &T_Event_Rho, &b_T_Event_Rho);

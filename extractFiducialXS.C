@@ -23,20 +23,41 @@ void extractFiducialXS()
   float xs_ratio = (n_ttbar > 0) ? n_ttbar_fiducial / n_ttbar : -999;
 
   printf("\n");
-  printf("--------------------------------------------------\n");
+  printf("------------------------------------------------------\n");
   printf(" N(events)                        = %.0f\n", n_events);
-  printf("--------------------------------------------------\n");
+  printf("------------------------------------------------------\n");
   printf(" N(ttbar)                         = %.0f\n", n_ttbar);
   printf(" N(ttbar selected)                = %.0f\n", n_ttbar_fiducial_selected+n_ttbar_nonfiducial_selected);
   printf(" total efficiency eff             = %5.2f%s\n", 1e2 * eff, "%");
-  printf("--------------------------------------------------\n");
+  printf("------------------------------------------------------\n");
   printf(" N(fiducial)                      = %.0f\n", n_ttbar_fiducial);
   printf(" N(fiducial selected)             = %.0f\n", n_ttbar_fiducial_selected);
   printf(" N(non-fiducial selected)         = %.0f\n", n_ttbar_nonfiducial_selected);
   printf(" fiducial efficiency eff_fid      = %5.2f%s\n", 1e2 * eff_fid, "%");
   printf(" contamination fraction f         = %5.2f%s\n", 1e2 * f, "%");
-  printf("--------------------------------------------------\n");
-  printf(" xs_fid/xs = N(fiducial)/N(ttvar) = %.4f\n", xs_ratio);
-  printf("--------------------------------------------------\n");
-  printf("\n");
+  printf("------------------------------------------------------\n");
+  printf(" xs_fid/xs = N(fiducial)/N(ttbar) = %.4f\n", xs_ratio);
+  printf("------------------------------------------------------\n");
+
+
+  // Synchronization with Kike
+  //----------------------------------------------------------------------------
+  TH1F* h_muon          = (TH1F*)file->Get("h_n_gen_muon");
+  TH1F* h_muon_fiducial = (TH1F*)file->Get("h_n_gen_muon_fiducial");
+  TH1F* h_elec          = (TH1F*)file->Get("h_n_gen_electron");
+  TH1F* h_elec_fiducial = (TH1F*)file->Get("h_n_gen_electron_fiducial");
+
+  int nbins = h_muon->GetNbinsX();
+
+  for (int i=1; i<nbins; i++)
+    printf(" [%d muon] N(gen) = %7d, N(fiducial) = %7d\n",
+	   i-1, h_muon->GetBinContent(i), h_muon_fiducial->GetBinContent(i));
+
+  printf("------------------------------------------------------\n");
+
+  for (int i=1; i<nbins; i++)
+    printf(" [%d electron] N(gen) = %7d, N(fiducial) = %7d\n",
+	   i-1, h_elec->GetBinContent(i), h_elec_fiducial->GetBinContent(i));
+
+  printf("------------------------------------------------------\n\n");
 }
